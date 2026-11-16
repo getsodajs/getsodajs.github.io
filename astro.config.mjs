@@ -1,7 +1,6 @@
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
 import { unified } from '@astrojs/markdown-remark'
-import { codeTheme, codeThemeLight } from './src/lib/code-theme.ts'
 import { remarkDocs } from './src/lib/remark-docs.ts'
 import { sidebar } from './src/lib/sidebar.ts'
 import { sodaRoot } from './src/lib/soda.ts'
@@ -31,8 +30,6 @@ export default defineConfig({
       routeMiddleware: './src/route-data.ts',
       logo: { src: './src/assets/brand.svg', alt: 'SodaJS', replacesTitle: true },
       expressiveCode: {
-        themes: [structuredClone(codeTheme), structuredClone(codeThemeLight)],
-        useStarlightUiThemeColors: true,
         styleOverrides: {
           borderRadius: '0.75rem',
           borderColor: 'var(--sl-color-gray-5)',

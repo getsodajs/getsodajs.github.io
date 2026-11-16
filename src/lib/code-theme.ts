@@ -30,30 +30,3 @@ export const codeTheme: ThemeRegistration = {
   ],
 }
 
-export const codeThemeLight: ThemeRegistration = {
-  name: 'soda-light',
-  type: 'light',
-  colors: {
-    'editor.background': '#00000000',
-    'editor.foreground': '#1f1f1f',
-  },
-  tokenColors: [
-    { scope: ['comment', 'punctuation.definition.comment'], settings: { foreground: '#9a9a9a' } },
-    {
-      scope: ['keyword', 'storage', 'storage.type', 'storage.modifier', 'keyword.operator.new'],
-      settings: { foreground: '#6b6b6b' },
-    },
-    { scope: ['string', 'constant.numeric', 'constant.language'], settings: { foreground: '#4a4a4a' } },
-    { scope: ['entity.name.type', 'support.type', 'entity.other.inherited-class'], settings: { foreground: '#000000' } },
-    { scope: ['punctuation', 'meta.brace', 'keyword.operator'], settings: { foreground: '#8f8f8f' } },
-    {
-      scope: [
-        'punctuation.decorator',
-        'meta.decorator entity.name.function',
-        'meta.decorator variable.other.readwrite',
-        'meta.decorator support.function',
-      ],
-      settings: { foreground: '#3c7d00' },
-    },
-  ],
-}
