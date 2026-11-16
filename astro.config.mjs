@@ -23,6 +23,7 @@ export default defineConfig({
       description: 'A class-based web framework for Bun: modules, dependency injection and decorators like Nest.',
       favicon: '/favicon.svg',
       head: [
+        { tag: 'meta', attrs: { name: 'google-site-verification', content: 'SedkH9ZUVX-Dpn6ef24kM-f2DwPpWidS82Qd14ILEMo' } },
         { tag: 'link', attrs: { rel: 'icon', type: 'image/png', sizes: '32x32', href: `${base}/favicon-32.png` } },
         { tag: 'link', attrs: { rel: 'apple-touch-icon', href: `${base}/apple-touch-icon.png` } },
       ],
