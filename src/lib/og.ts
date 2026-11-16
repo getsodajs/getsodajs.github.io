@@ -99,7 +99,6 @@ function card({ eyebrow, lines, description, titleSize = 76 }: Card): Node {
             },
             'bun create soda',
           ),
-          el('div', { color: '#8a8a8a' }, 'sodajs.dev'),
         ]),
       ],
     ),
