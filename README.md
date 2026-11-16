@@ -1,6 +1,6 @@
 # getsodajs.github.io
 
-The website of [Soda](https://github.com/getsodajs/soda): the landing page and the documentation, at <https://getsodajs.github.io>.
+The website of [Soda](https://github.com/getsodajs/soda): the landing page and the documentation, at <https://sodajs.dev>.
 
 The documentation is not written here. It is read from [`docs/`](https://github.com/getsodajs/soda/tree/main/docs) in the framework's repository, cloned into `soda/` before each build; the HTTP benchmark results come from the same place. The site is rebuilt on every push here, every night, and on demand from the Actions tab.
 

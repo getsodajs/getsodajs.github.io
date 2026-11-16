@@ -2,7 +2,7 @@ import { getCollection, type CollectionEntry } from 'astro:content'
 import { repository, rewriteMarkdown, sourceOf } from './links.ts'
 import { groups } from './sidebar.ts'
 
-export const site = 'https://getsodajs.github.io'
+export const site = 'https://sodajs.dev'
 
 export const summary = [
   '# Soda',

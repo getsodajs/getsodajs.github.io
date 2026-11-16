@@ -8,7 +8,7 @@ import { sodaRoot } from './src/lib/soda.ts'
 const base = ''
 
 export default defineConfig({
-  site: 'https://getsodajs.github.io',
+  site: 'https://sodajs.dev',
   trailingSlash: 'always',
   vite: {
     resolve: { alias: { '@soda': sodaRoot } },

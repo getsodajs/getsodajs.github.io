@@ -4,7 +4,7 @@ import { Glob } from 'bun'
 
 const dist = join(import.meta.dir, '../dist')
 const base = '/'
-const site = 'https://getsodajs.github.io'
+const site = 'https://sodajs.dev'
 
 const pages = new Map<string, string>()
 
