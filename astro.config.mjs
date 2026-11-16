@@ -24,6 +24,7 @@ export default defineConfig({
       favicon: '/favicon.svg',
       head: [
         { tag: 'meta', attrs: { name: 'google-site-verification', content: 'SedkH9ZUVX-Dpn6ef24kM-f2DwPpWidS82Qd14ILEMo' } },
+        { tag: 'meta', attrs: { name: 'yandex-verification', content: '7ec8bbb5d938810d' } },
         { tag: 'link', attrs: { rel: 'icon', type: 'image/png', sizes: '32x32', href: `${base}/favicon-32.png` } },
         { tag: 'link', attrs: { rel: 'apple-touch-icon', href: `${base}/apple-touch-icon.png` } },
       ],
