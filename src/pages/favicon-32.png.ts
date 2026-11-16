@@ -1,0 +1,4 @@
+import type { APIRoute } from 'astro'
+import { renderIcon } from '../lib/og.ts'
+
+export const GET: APIRoute = () => new Response(renderIcon(32), { headers: { 'content-type': 'image/png' } })

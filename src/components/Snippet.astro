@@ -1,0 +1,54 @@
+---
+import { Code } from 'astro:components'
+import { codeTheme } from '../lib/code-theme.ts'
+
+interface Props {
+  code: string
+  lang?: 'ts' | 'text'
+  caption?: string
+}
+
+const { code, lang = 'ts', caption } = Astro.props
+---
+
+<figure class="snippet">
+  {caption && <figcaption>{caption}</figcaption>}
+  <Code code={code} lang={lang} theme={codeTheme} wrap={lang === 'text'} />
+</figure>
+
+<style>
+  .snippet {
+    margin: 0;
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: var(--surface);
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+  }
+
+  figcaption {
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+  }
+
+  .snippet :global(pre) {
+    margin: 0;
+    padding: 1.25rem;
+    background: transparent !important;
+    font-family: var(--mono);
+    font-size: 0.875rem;
+    line-height: 1.7;
+    overflow-x: auto;
+  }
+
+  @media (max-width: 40rem) {
+    .snippet :global(pre) {
+      padding: 1rem;
+      font-size: 0.75rem;
+    }
+  }
+</style>

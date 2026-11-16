@@ -1,0 +1,162 @@
+---
+import Snippet from './Snippet.astro'
+
+const base = import.meta.env.BASE_URL
+
+const code = `@Module({
+  providers: [UsersService],
+  controllers: [UsersController],
+})
+export class UsersModule {}
+
+export class UsersService {
+  readonly #repository = inject(UsersRepository)
+}`
+---
+
+<section class="wiring" aria-labelledby="wiring">
+  <div class="head">
+    <h2 id="wiring">Modules &amp; DI</h2>
+    <p class="claim">Wiring mistakes fail at startup, not on a request.</p>
+    <p class="text">
+      Modules group controllers and providers. A class asks for what it needs with <code>inject()</code>, typed by its
+      token. The whole graph is checked when the application starts: a missing provider, a cycle or a provider that is
+      not exported stops it with the chain that led there and the fix.
+    </p>
+    <a href={`${base}docs/providers-and-modules/#errors-at-startup`}>Providers and modules</a>
+  </div>
+
+  <div class="pair">
+    <Snippet code={code} caption="UsersRepository is not provided" />
+    <figure class="terminal">
+      <figcaption>Terminal</figcaption>
+      <pre><span class="dim">$</span> bun dev
+<span class="err">DiError:</span> No provider for <b>UsersRepository</b> in <b>UsersModule</b>
+<span class="hl">(UsersService → UsersRepository)</span>
+<span class="fix">Add it to the providers of UsersModule, or import a module that exports it.</span>
+<span class="dim">    at new UsersService (src/users/users.service.ts:4:24)</span></pre>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .wiring {
+    display: grid;
+    gap: 3rem;
+    padding-block: clamp(4rem, 9vw, 7.5rem);
+  }
+
+  .head {
+    display: grid;
+    gap: 1.25rem;
+    max-width: 46rem;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .claim {
+    margin: 0;
+    font-size: clamp(1.375rem, 2.6vw, 2rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    color: var(--accent);
+  }
+
+  .text {
+    margin: 0;
+    color: var(--muted);
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+
+  .text code {
+    padding: 0.1em 0.35em;
+    border: 1px solid var(--border);
+    border-radius: 0.3rem;
+    background: var(--surface);
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: 0.85em;
+    white-space: nowrap;
+  }
+
+  .head a {
+    justify-self: start;
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .head a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  .pair {
+    display: grid;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  @media (min-width: 64rem) {
+    .pair {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    }
+  }
+
+  .terminal {
+    margin: 0;
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: #050505;
+    overflow: hidden;
+  }
+
+  .terminal figcaption {
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+  }
+
+  .terminal pre {
+    margin: 0;
+    padding: 1.5rem 1.25rem;
+    color: #bdbdbd;
+    font-family: var(--mono);
+    font-size: 0.875rem;
+    line-height: 1.8;
+    white-space: pre-wrap;
+  }
+
+  .terminal b {
+    color: var(--fg);
+    font-weight: 600;
+  }
+
+  .err {
+    color: #ff6b5e;
+    font-weight: 600;
+  }
+
+  .hl {
+    color: var(--accent);
+  }
+
+  .fix {
+    color: var(--fg);
+  }
+
+  .dim {
+    color: #5a5a5a;
+  }
+</style>

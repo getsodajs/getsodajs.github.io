@@ -1,0 +1,102 @@
+---
+import { inline } from '../lib/landing.ts'
+
+interface Props {
+  id: string
+  title: string
+  text: string
+  href: string
+  label: string
+  wide?: boolean
+}
+
+const { id, title, text, href, label, wide = false } = Astro.props
+---
+
+<section class:list={['feature', { wide }]} aria-labelledby={id}>
+  <div class="copy">
+    <h2 id={id}>{title}</h2>
+    <p>{inline(text).map((part) => (part.code ? <code>{part.text}</code> : part.text))}</p>
+    <a href={href}>{label}</a>
+  </div>
+  <div class="visual">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .feature {
+    display: grid;
+    gap: 2rem;
+    align-items: start;
+    padding-block: clamp(4rem, 9vw, 7.5rem);
+  }
+
+  @media (min-width: 64rem) {
+    .feature:not(.wide) {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: 4rem;
+    }
+
+    .feature:not(.wide) .copy {
+      position: sticky;
+      top: 2rem;
+    }
+  }
+
+  .copy {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 0;
+    max-width: 32rem;
+    text-wrap: pretty;
+    color: var(--muted);
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+
+  .wide p {
+    max-width: 44rem;
+  }
+
+  code {
+    white-space: nowrap;
+    padding: 0.1em 0.35em;
+    border: 1px solid var(--border);
+    border-radius: 0.3rem;
+    background: var(--surface);
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: 0.85em;
+  }
+
+  a {
+    justify-self: start;
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  .visual {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+  }
+</style>

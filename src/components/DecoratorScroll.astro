@@ -1,0 +1,318 @@
+---
+import { Code } from 'astro:components'
+import { codeTheme } from '../lib/code-theme.ts'
+import { inline } from '../lib/landing.ts'
+import { steps } from '../lib/showcase.ts'
+
+const base = import.meta.env.BASE_URL
+const total = String(steps.length).padStart(2, '0')
+---
+
+<section class="deco" data-scroll-steps aria-labelledby="decorators" style={`--n: ${steps.length}`}>
+  <div class="pin">
+    <div class="side">
+      <h2 id="decorators">Decorators</h2>
+      <p class="lead">
+        Standard TC39 decorators: no <code>experimentalDecorators</code>, no <code>reflect-metadata</code>, no compiler flags.
+      </p>
+      <ol class="list">
+        {
+          steps.map((step, index) => (
+            <li data-step={index} class:list={{ active: index === 0 }}>
+              <button type="button" data-go={index}>
+                {step.title}
+              </button>
+            </li>
+          ))
+        }
+      </ol>
+      <a class="more" href={`${base}docs/controllers/`}>Controllers in the docs</a>
+    </div>
+
+    <div class="card">
+      {
+        steps.map((step, index) => (
+          <div class:list={['panel', { active: index === 0 }]} data-panel={index}>
+            <p class="cap">
+              <span>{step.title}</span>
+              <span class="count">
+                {String(index + 1).padStart(2, '0')} / {total}
+              </span>
+            </p>
+            <p class="note">{inline(step.note).map((part) => (part.code ? <code>{part.text}</code> : part.text))}</p>
+            <Code code={step.code} lang="ts" theme={codeTheme} />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  for (const section of document.querySelectorAll('[data-scroll-steps]')) {
+    const marked = [...section.querySelectorAll('[data-step], [data-panel]')]
+    const count = section.querySelectorAll('[data-panel]').length
+    let current = 0
+
+    const span = () => section.offsetHeight - innerHeight
+
+    const update = () => {
+      const top = section.getBoundingClientRect().top
+      const progress = span() > 0 ? Math.min(Math.max(-top / span(), 0), 0.9999) : 0
+      const index = Math.floor(progress * count)
+
+      if (index === current) {
+        return
+      }
+
+      current = index
+
+      for (const element of marked) {
+        element.classList.toggle('active', Number(element.dataset.step ?? element.dataset.panel) === index)
+      }
+    }
+
+    for (const button of section.querySelectorAll('[data-go]')) {
+      button.addEventListener('click', () => {
+        const start = section.getBoundingClientRect().top + scrollY
+
+        scrollTo({ top: start + ((Number(button.dataset.go) + 0.5) / count) * span(), behavior: 'smooth' })
+      })
+    }
+
+    section.classList.add('pinned')
+    addEventListener('scroll', update, { passive: true })
+    addEventListener('resize', update)
+    update()
+  }
+</script>
+
+<style>
+  .deco {
+    padding-block: clamp(4rem, 9vw, 7.5rem);
+  }
+
+  .pin {
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 64rem) {
+    .pin {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
+      gap: 4rem;
+      align-items: center;
+    }
+  }
+
+  .deco.pinned {
+    height: calc(var(--n) * 55vh + 100vh);
+    padding-block: 0;
+  }
+
+  .deco.pinned .pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    align-content: center;
+  }
+
+  .side {
+    display: grid;
+    gap: 1.5rem;
+    min-width: 0;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .lead {
+    max-width: 30rem;
+    margin: 0;
+    color: var(--muted);
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+
+  code {
+    padding: 0.1em 0.35em;
+    border: 1px solid var(--border);
+    border-radius: 0.3rem;
+    background: var(--surface);
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: 0.85em;
+    white-space: nowrap;
+  }
+
+  .list {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-left: 1px solid var(--border);
+  }
+
+  .list li {
+    position: relative;
+    padding: 0.45rem 0 0.45rem 1.25rem;
+  }
+
+  .list li::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -1px;
+    width: 2px;
+    background: transparent;
+    transition: background 0.2s;
+  }
+
+  .list button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #5f5f5f;
+    font: inherit;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .list button:hover {
+    color: var(--fg);
+  }
+
+  .list li.active::before {
+    background: var(--accent);
+  }
+
+  .list li.active button {
+    color: var(--fg);
+  }
+
+  .more {
+    justify-self: start;
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .more:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  .card {
+    display: grid;
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: var(--surface);
+    backdrop-filter: blur(10px);
+  }
+
+  .panel {
+    grid-area: 1 / 1;
+    min-width: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition:
+      opacity 0.3s,
+      transform 0.3s,
+      visibility 0.3s;
+  }
+
+  .panel.active {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .cap {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0.9rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+  }
+
+  .count {
+    color: var(--accent);
+  }
+
+  .note {
+    margin: 0;
+    padding: 1.25rem 1.5rem 0;
+    color: var(--fg);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  .panel :global(pre) {
+    margin: 0;
+    padding: 1.25rem 1.5rem 1.5rem;
+    background: transparent !important;
+    font-family: var(--mono);
+    font-size: clamp(0.75rem, 1.15vw, 1rem);
+    line-height: 1.75;
+    overflow-x: auto;
+  }
+
+  .deco:not(.pinned) .panel {
+    grid-area: auto;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .deco:not(.pinned) .panel + .panel {
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 64rem) {
+    .deco.pinned .pin {
+      gap: 1.25rem;
+      align-content: start;
+      padding-top: 1.5rem;
+    }
+
+    .lead,
+    .more {
+      display: none;
+    }
+
+    .side {
+      gap: 1rem;
+    }
+
+    .list button {
+      font-size: 1rem;
+    }
+
+    .list li {
+      padding-block: 0.3rem;
+    }
+
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .panel {
+      transition: none;
+    }
+  }
+</style>

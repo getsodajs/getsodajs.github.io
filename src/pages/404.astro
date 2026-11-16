@@ -1,0 +1,23 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro'
+
+const base = import.meta.env.BASE_URL
+---
+
+<StarlightPage
+  frontmatter={{
+    title: 'Not found',
+    head: [{ tag: 'meta', attrs: { name: 'robots', content: 'noindex' } }],
+    template: 'splash',
+    pagefind: false,
+    editUrl: false,
+    hero: {
+      title: 'Not found',
+      tagline: 'This page does not exist, or has moved.',
+      actions: [
+        { text: 'Documentation', link: `${base}docs/getting-started/`, variant: 'primary' },
+        { text: 'Home', link: base, variant: 'minimal' },
+      ],
+    },
+  }}
+/>

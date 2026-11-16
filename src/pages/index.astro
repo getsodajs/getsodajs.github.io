@@ -1,0 +1,560 @@
+---
+import '@fontsource-variable/inter'
+import Actions from '../components/Actions.astro'
+import Feature from '../components/Feature.astro'
+import DecoratorScroll from '../components/DecoratorScroll.astro'
+import OneSchema from '../components/OneSchema.astro'
+import Wiring from '../components/Wiring.astro'
+import { bench } from '../lib/landing.ts'
+import { included } from '../lib/showcase.ts'
+
+const base = import.meta.env.BASE_URL
+const doc = (path: string) => `${base}docs/${path}/`
+const github = 'https://github.com/getsodajs/soda'
+const title = 'SodaJS — modern class-based web framework over Bun'
+const description =
+  "Controllers, modules, dependency injection, guards and interceptors with standard TC39 decorators, compiled into Bun's native router. Validation, OpenAPI, JWT and WebSockets included."
+const canonical = new URL(base, Astro.site).href
+const image = new URL(`${base}og/index.png`, Astro.site).href
+const structured = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareSourceCode',
+  name: 'SodaJS',
+  alternateName: ['Soda', '@getsoda/core'],
+  description,
+  url: canonical,
+  codeRepository: github,
+  programmingLanguage: 'TypeScript',
+  runtimePlatform: 'Bun',
+  license: 'https://opensource.org/licenses/MIT',
+}
+
+const results = bench('bench/http/RESULTS.md')
+const ranked = results.results
+  .filter((result) => !result.name.startsWith('Bun'))
+  .toSorted((a, b) => b.average - a.average)
+const fastest = ranked[0]?.average ?? 1
+const soda = ranked.find((result) => result.name === 'Soda')
+const nest = ranked.find((result) => result.name === 'Nest (Fastify)')
+const times = soda && nest ? Math.round((soda.average / nest.average) * 10) / 10 : undefined
+const format = (value: number) => value.toLocaleString('en-US')
+
+const items = included(doc)
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <link rel="icon" href={`${base}favicon-32.png`} type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} />
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href={`${base}sitemap-index.xml`} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SodaJS" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en" />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="SodaJS — modern class-based web framework over Bun" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={image} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <script type="application/ld+json" set:html={JSON.stringify(structured)} />
+  </head>
+  <body>
+    <div class="screen">
+      <div class="backdrop" aria-hidden="true"><div class="grid"></div></div>
+      <header class="top">
+        <a class="logo" href={base}><img src={`${base}brand.svg`} width="106" height="57" alt="SodaJS" /></a>
+        <nav aria-label="Main">
+          <a href={doc('getting-started')}>Docs</a>
+          <a href={github}>Github</a>
+        </nav>
+      </header>
+
+      <section class="hero">
+        <h1><span>Modern <em>class-based</em></span> <span>web framework over Bun</span></h1>
+        <p class="tagline">Structured TypeScript APIs at the speed of Bun</p>
+        <Actions />
+      </section>
+    </div>
+
+    <main class="content">
+        <DecoratorScroll />
+
+        <Wiring />
+
+        <OneSchema />
+
+        <Feature
+          id="speed"
+          title="Speed"
+          text="Routes compile into Bun's native router, `Bun.serve({ routes })`: a route without guards adds about 0.1 ns to calling its handler."
+          href={`${github}/tree/main/bench/http`}
+          label="The benchmark"
+        >
+          <div class="speed-number">
+            <strong>{times}×</strong>
+            <span>the requests per second of Nest on Fastify, on par with Hono</span>
+          </div>
+          <ul class="bars">
+            {
+              ranked.map((result) => (
+                <li class:list={{ soda: result.name === 'Soda' }}>
+                  <span>{result.name}</span>
+                  <span class="track" aria-hidden="true">
+                    <span class="fill" style={`width: ${((result.average / fastest) * 100).toFixed(1)}%`} />
+                  </span>
+                  <span class="value">{format(result.average)}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="bench-note">
+            {`Requests per second, average of ${results.scenarios.join(', ')}. ${results.setup.join(' ')}`}
+          </p>
+        </Feature>
+
+        <section class="included" aria-labelledby="included">
+          <h2 id="included">Included</h2>
+          <p>One package, <code>@getsoda/core</code>, with entry points for what an API needs.</p>
+          <ul class="specs">
+            {
+              items.map((item) => (
+                <li>
+                  <a href={item.href}>
+                    <code class="path">{item.path}</code>
+                    <strong>{item.name}</strong>
+                    <span>{item.text.replaceAll('`', '')}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        <section class="cta" aria-labelledby="start">
+          <h2 id="start">Start in one command</h2>
+          <Actions />
+        </section>
+    </main>
+
+    <footer>
+      <img src={`${base}brand.svg`} width="106" height="57" alt="SodaJS" />
+      <span>MIT License</span>
+      <span class="spacer"></span>
+      <a href={doc('getting-started')}>Docs</a>
+      <a href={doc('from-nest')}>From Nest</a>
+      <a href={`${base}llms.txt`}>llms.txt</a>
+      <a href={github}>Github</a>
+    </footer>
+
+    <script is:inline>
+      for (const button of document.querySelectorAll('[data-copy]')) {
+        button.addEventListener('click', async () => {
+          const copied = await navigator.clipboard.writeText(button.dataset.copy).then(() => true, () => false)
+
+          if (!copied) {
+            getSelection().selectAllChildren(button.previousElementSibling)
+
+            return
+          }
+
+          button.classList.add('copied')
+          setTimeout(() => button.classList.remove('copied'), 1500)
+        })
+      }
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --bg: #000;
+    --fg: #fff;
+    --muted: #8a8a8a;
+    --border: #272727;
+    --surface: rgba(255, 255, 255, 0.05);
+    --accent: #78fc04;
+    --gutter: clamp(1rem, 5vw, 6rem);
+    --mono: ui-monospace, 'SF Mono', Menlo, monospace;
+    color-scheme: dark;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Inter Variable', Inter, system-ui, sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  p code,
+  span code {
+    white-space: nowrap;
+  }
+</style>
+
+<style>
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem var(--gutter);
+    position: relative;
+    z-index: 1;
+  }
+
+  .logo {
+    display: block;
+    line-height: 0;
+  }
+
+  .logo img {
+    display: block;
+    width: clamp(5rem, 14vw, 6.625rem);
+    height: auto;
+  }
+
+  nav {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 1.125rem;
+  }
+
+  nav a {
+    text-decoration: none;
+  }
+
+  nav a:hover {
+    color: var(--accent);
+  }
+
+  .screen {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+
+  .hero {
+    position: relative;
+    flex: 1;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 1.75rem;
+    padding: 3rem var(--gutter) 6rem;
+    text-align: center;
+  }
+
+  .backdrop {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 831px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .grid {
+    position: absolute;
+    top: -59px;
+    left: calc(50% - 805px + 84px);
+    width: 1610px;
+    height: 890px;
+    background-image:
+      linear-gradient(to right, #1f1f1f 1px, transparent 1px),
+      linear-gradient(to bottom, #1f1f1f 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image:
+      radial-gradient(circle 370px at 374px 515px, #000, transparent),
+      radial-gradient(circle 370px at 1241px 366px, #000, transparent);
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+    animation: drift 16s ease-in-out infinite;
+  }
+
+  @keyframes drift {
+    0%,
+    100% {
+      mask-position: 0 0, 0 0;
+    }
+
+    25% {
+      mask-position: 240px -120px, -200px 140px;
+    }
+
+    50% {
+      mask-position: 80px 170px, -300px -80px;
+    }
+
+    75% {
+      mask-position: -180px 60px, 140px 120px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .grid {
+      animation: none;
+    }
+  }
+
+  h1 {
+    position: relative;
+    margin: 0;
+    font-size: clamp(2.75rem, 7.4vw, 6rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  h1 em {
+    font-style: italic;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 48rem) {
+    h1 span {
+      display: inline-block;
+      white-space: nowrap;
+    }
+  }
+
+  .tagline {
+    position: relative;
+    margin: 0 0 1rem;
+    color: var(--muted);
+    font-size: clamp(1.125rem, 2vw, 1.5rem);
+  }
+
+  .content {
+    position: relative;
+    max-width: 90rem;
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  .speed-number {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .speed-number strong {
+    color: var(--accent);
+    font-size: clamp(5rem, 14vw, 10rem);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+
+  .speed-number span {
+    max-width: 14rem;
+    color: var(--muted);
+    font-size: 1.125rem;
+  }
+
+  .bars {
+    display: grid;
+    gap: 0.9rem;
+    margin: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: var(--surface);
+    list-style: none;
+  }
+
+  .bars li {
+    display: grid;
+    grid-template-columns: 9.5rem minmax(0, 1fr) 5.5rem;
+    gap: 1rem;
+    align-items: center;
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+
+  .track {
+    height: 0.5rem;
+    border-radius: 999px;
+    background: #161616;
+  }
+
+  .fill {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: #3a3a3a;
+  }
+
+  .bars .soda {
+    color: var(--fg);
+    font-weight: 600;
+  }
+
+  .bars .soda .fill {
+    background: var(--accent);
+  }
+
+  .value {
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+  }
+
+  @media (max-width: 40rem) {
+    .bars li {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.4rem 1rem;
+    }
+
+    .track {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+
+  .bench-note {
+    margin: 0;
+    color: #5f5f5f;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    overflow-x: auto;
+  }
+
+  .included {
+    display: grid;
+    gap: 2.5rem;
+    padding-block: clamp(4rem, 9vw, 7.5rem);
+  }
+
+  .included h2,
+  .cta h2 {
+    margin: 0;
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .included > p {
+    margin: -1rem 0 0;
+    color: var(--muted);
+    font-size: 1.125rem;
+  }
+
+  .specs {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .specs a {
+    display: grid;
+    grid-template-columns: 14rem 12rem minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: baseline;
+    padding: 1.25rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+
+  .specs a:hover {
+    background: var(--surface);
+  }
+
+  .specs a:hover strong {
+    color: var(--accent);
+  }
+
+  .specs .path {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.875rem;
+  }
+
+  .specs strong {
+    font-size: 1.125rem;
+    font-weight: 600;
+    transition: color 0.15s;
+  }
+
+  .specs span {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 48rem) {
+    .specs a {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.3rem;
+      padding-inline: 0;
+    }
+  }
+
+  .cta {
+    display: grid;
+    justify-items: center;
+    gap: 2rem;
+    padding-block: clamp(5rem, 11vw, 9rem);
+    text-align: center;
+  }
+
+  footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+    padding: 2rem var(--gutter);
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+
+  footer img {
+    width: 4rem;
+    height: auto;
+  }
+
+  footer .spacer {
+    flex: 1;
+  }
+
+  footer a {
+    text-decoration: none;
+  }
+
+  footer a:hover {
+    color: var(--fg);
+  }
+</style>

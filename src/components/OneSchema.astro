@@ -1,0 +1,254 @@
+---
+import { Code } from 'astro:components'
+import { codeTheme } from '../lib/code-theme.ts'
+import { snippet } from '../lib/landing.ts'
+
+const base = import.meta.env.BASE_URL
+
+const schema = snippet('docs/validation.md', undefined, 'ts')
+const outputs = [
+  {
+    title: 'Checks the request',
+    note: 'A body the schema refuses gets a 400, every issue listed.',
+    code: JSON.stringify(JSON.parse(snippet('docs/validation.md', 'Bodies', 'json')), null, 2),
+    lang: 'json' as const,
+  },
+  {
+    title: 'Types the handler',
+    note: 'The type comes from the schema. Nothing to keep in sync.',
+    code: 'create(input) {\n  input.name   // string\n  input.email  // string\n  input.age    // number | undefined\n}',
+    lang: 'ts' as const,
+  },
+  {
+    title: 'Documents the route',
+    note: 'In /openapi.json and Swagger UI, with no extra decorators.',
+    code: 'POST /users\n  body\n    name   string    required\n    email  string    required\n    age    integer',
+    lang: 'text' as const,
+  },
+]
+---
+
+<section class="one" aria-labelledby="validation">
+  <div class="head">
+    <h2 id="validation">Validation</h2>
+    <p class="claim">One schema, three jobs.</p>
+    <p class="text">
+      Any Standard Schema library: zod, valibot, arktype. No DTO classes, no decorators on every field.
+    </p>
+    <a href={`${base}docs/validation/`}>Validation</a>
+  </div>
+
+  <div class="fan">
+    <figure class="source">
+      <figcaption>The schema</figcaption>
+      <Code code={schema} lang="ts" theme={codeTheme} />
+    </figure>
+    <ol class="outputs">
+      {
+        outputs.map((output) => (
+          <li>
+            <div class="label">
+              <p class="title">{output.title}</p>
+              <p class="note">{output.note}</p>
+            </div>
+            <Code code={output.code} lang={output.lang} theme={codeTheme} />
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .one {
+    display: grid;
+    gap: 3rem;
+    padding-block: clamp(4rem, 9vw, 7.5rem);
+  }
+
+  .head {
+    display: grid;
+    gap: 1.25rem;
+    max-width: 46rem;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .claim {
+    margin: 0;
+    color: var(--accent);
+    font-size: clamp(1.375rem, 2.6vw, 2rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+
+  .text {
+    margin: 0;
+    color: var(--muted);
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+
+  .head a {
+    justify-self: start;
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .head a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  .fan {
+    display: grid;
+    gap: 0;
+    align-items: center;
+  }
+
+  @media (min-width: 82rem) {
+    .fan {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 15fr);
+    }
+  }
+
+  .source,
+  .outputs li {
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: var(--surface);
+    backdrop-filter: blur(10px);
+  }
+
+  .source {
+    margin: 0;
+  }
+
+  figcaption {
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+  }
+
+  .fan :global(pre) {
+    margin: 0;
+    padding: 1.1rem 1.25rem;
+    background: transparent !important;
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    line-height: 1.7;
+    overflow-x: auto;
+  }
+
+  .outputs {
+    position: relative;
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 2rem 0 0 1.5rem;
+    list-style: none;
+  }
+
+  .outputs::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 2rem;
+    left: 0;
+    width: 1px;
+    background: var(--accent);
+  }
+
+  .outputs li {
+    position: relative;
+    display: grid;
+    align-items: center;
+  }
+
+  .outputs li::before {
+    content: '';
+    position: absolute;
+    top: 2rem;
+    right: 100%;
+    width: 1.5rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  @media (min-width: 82rem) {
+    .outputs {
+      padding: 0 0 0 4rem;
+    }
+
+    .outputs::before {
+      top: calc(1rem + 2rem);
+      bottom: calc(1rem + 2rem);
+      left: 2rem;
+    }
+
+    .outputs::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 2rem;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .outputs li {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    }
+
+    .outputs li :global(pre) {
+      padding-inline: 1rem;
+      font-size: 0.78rem;
+    }
+
+    .outputs li::before {
+      top: 50%;
+      width: 2rem;
+    }
+  }
+
+  .label {
+    padding: 1.1rem 1.25rem;
+  }
+
+  .title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .note {
+    margin: 0.35rem 0 0;
+    color: var(--muted);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+
+  @media (min-width: 82rem) {
+    .outputs li :global(pre) {
+      border-left: 1px solid var(--border);
+    }
+  }
+
+  @media (max-width: 82rem) {
+    .outputs li :global(pre) {
+      border-top: 1px solid var(--border);
+    }
+  }
+</style>
