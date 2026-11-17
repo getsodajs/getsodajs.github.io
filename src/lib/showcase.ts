@@ -79,6 +79,13 @@ export const included = (doc: (path: string) => string): Item[] => [
     size: 'wide',
   },
   {
+    path: '@getsoda/core/cqrs',
+    name: 'CQRS',
+    text: 'Command, query and event buses. `execute()` resolves with the type the command declares.',
+    href: `${doc('cqrs')}`,
+    size: 'small',
+  },
+  {
     path: '@getsoda/core/testing',
     name: 'Testing',
     text: 'The app on a free port, any provider replaced.',
